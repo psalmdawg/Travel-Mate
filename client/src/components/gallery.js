@@ -1,44 +1,21 @@
 import React, {Component} from 'react';
-import axios from 'axios';
 
 class Gallery extends Component{
   constructor(){
     super();
     this.state={
-      images:null
+
     }
-
-    this.getImages = this.getImages.bind(this)
     this.displayImages = this.displayImages.bind(this)
-  }
-
-  showState = (event) => {
-    console.log(this.state)
-  }
-
-  getImages(){
-    const _this = this
-
-    axios.get('/memories')
-    .then(function (response) {
-      _this.setState({ images:response.data })
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-
-  }
-
-  componentDidMount(){
-    this.getImages()
   }
 
 
   displayImages(){
 
-    if(this.state.images){
+    if(this.props.images){
+
       return(
-        this.state.images.map((image, i )=>{
+        this.props.images.map((image, i )=>{
           return(
             <div style={styles.galleryImage_ctr} key={i}>
                <img style={styles.galleryImage} src={image.image_url} alt={image.title} />
@@ -51,10 +28,10 @@ class Gallery extends Component{
           )
         })
       )
+
     }
 
   }
-
 
 
   render(){
@@ -64,7 +41,6 @@ class Gallery extends Component{
         <button onClick={this.showState}>state</button>
         <br/><br/>
         {this.displayImages()}
-
       </div>
     )
   }
@@ -73,14 +49,12 @@ class Gallery extends Component{
 const styles={
   galleryImage:{
     width: '200px',
-    // margin: '5px',
     float: 'left'
   },
   galleryImage_ctr:{
     width: '90%',
     padding: '10px',
     border: "1px solid #DCDCDC",
-
     margin: "0 auto",
     marginBottom:'10px',
     overflow:'auto'
@@ -88,7 +62,6 @@ const styles={
   galleryImageText_wrp:{
     marginLeft:"5px",
     float: 'left',
-
   },
   galleryImage_title:{
     fontSize: '13px'

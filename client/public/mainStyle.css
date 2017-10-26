@@ -34,3 +34,10 @@
   background: #267dc0;
   color: #fff;
 }
+.info_img{
+  transition: all .2s ease-in-out;
+}
+.info_img:hover{
+  transform: scale(1.1);
+  border:1px solid white;
+}

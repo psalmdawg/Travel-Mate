@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import superagent from 'superagent';
+import Dropzone from 'react-dropzone'
 import Geosuggest from 'react-geosuggest';
 
 export class Uploadmyfile extends Component {
@@ -9,7 +10,7 @@ export class Uploadmyfile extends Component {
     this.state = {
       title:"",
       description:"",
-      file:null,
+      files:[],
       lat:null,
       lng:null,
       processing:false,
@@ -20,6 +21,8 @@ export class Uploadmyfile extends Component {
     this.showPosition = this.showPosition.bind(this)
   }
 
+  // [{url: "http://res.cloudinary.com/pauly/image/upload/v1508928124/rf5vojrjyanfk1yaf53l.png", _id: "59f06a88caeb534c2e8aec83"},{url: "http://res.cloudinary.com/pauly/image/upload/v1508928132/lecilhdzetgx5l35aywa.png", _id: "59f06a88caeb534c2e8aec82"},{url: "http://res.cloudinary.com/pauly/image/upload/v1508928136/gktqwlt4dkknnbgskiqo.png", _id: "59f06a88caeb534c2e8aec81"}]
+
   handleUploadFile = (event) => {
 
     event.preventDefault();
@@ -28,24 +31,34 @@ export class Uploadmyfile extends Component {
       processing:true
     })
 
-    superagent.post('/memories/new')
-    .attach('theseNamesMustMatch', this.state.file, this.state.description )
-    .set({ description: this.state.description,title: this.state.title,lat:this.state.lat, lng:this.state.lng})
-    .end((err, res) => {
-      if (err) console.log(err);
+
+    const req = superagent.post('/memories/new');
+    this.state.files.forEach(file => {
+        req.attach('theseNamesMustMatch', file);
+    });
+
+    req.set({ description: this.state.description, title: this.state.title, lat:this.state.lat, lng:this.state.lng})
+    req.end((err, res) => {
+      if (err) throw(err);
       console.log(res)
       console.log('File uploaded!');
+      const tmpUrlArry = [];
+      res.body.image_url.forEach(url => {
+        tmpUrlArry.push(url)
+      })
       this.setState({
         processing:false,
-        uploaded_uri:res.body.image_url
-
+        uploaded_uri:tmpUrlArry
       })
     })
   }
 
   handleFile(e) {
+    console.log(e)
+    const fileArray = this.state.files;
+    e.forEach(image => this.state.files.push(image))
     this.setState({
-      file:e.target.files[0]
+      files:fileArray
     });
   }
 
@@ -81,6 +94,16 @@ export class Uploadmyfile extends Component {
 
   }
 
+  displayPreviewImages(){
+    return(
+      this.state.uploaded_uri.map((image) => {
+        return(
+          <img style={{width:'200px', margin:'10px'}} alt="Uploaded images"  src={image.url} />
+        )
+      })
+    )
+  }
+
   geoSuggestSelected(suggestion){
     // (suggest)=>{console.log('suggested: ', suggest)}
     console.log(suggestion)
@@ -98,21 +121,36 @@ export class Uploadmyfile extends Component {
     if (this.state.uploaded_uri) {
       uploaded = (
         <div>
-          <h4>Image uploaded!</h4>
-          <img style={{width:'150px'}} alt="preview" src={this.state.uploaded_uri} />
+          <h4>Upload Success!</h4>
+            {this. displayPreviewImages()}
         </div>
       );
     }
 
     if (this.state.processing) {
-      processing = "Uploading Image...";
+      processing = "Processing... Please wat";
     }
 
     return(
       <div>
+        <button onClick={()=>{console.log(this.state)}}>b</button>
         <form >
+
           image upload
-          <input type="file" name="fileupload" onChange={this.handleFile}/><br/><br/>
+          <div className="dropzone">
+          <Dropzone onDrop={this.handleFile}>
+            <p>Try dropping some files here, or click to select files to upload.</p>
+          </Dropzone>
+        </div>
+        <div>
+          <h2>Dropped files</h2>
+            { this.state.files && this.state.files.map(f => <div key={f.name}><div >{f.name}</div><img style={{width:'50px'}}src={f.preview} /></div>)
+            }
+        </div>
+
+
+
+
           <input type="text" name="title" placeholder="title" onChange={this.handleTitleChange}/><br/><br/>
           <input type="text" name="description" placeholder="description" onChange={this.handleDescriptionChange}/><br/><br/>
           <button onClick={this.handleUploadFile}>submit</button><br/><br/>

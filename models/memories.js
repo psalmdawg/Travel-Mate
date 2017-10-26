@@ -6,9 +6,12 @@ var Schema = mongoose.Schema;
 var MemorySchema = new Schema({
   title: String,
   description: String,
-  image_url: String,
-  lat:String,
-  lng:String
+  timeStamp:Number,
+  image_url: [{
+    url:String
+  }],
+  lat:Number,
+  lng:Number
 
 });
 
