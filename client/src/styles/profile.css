@@ -1,0 +1,44 @@
+.profile_main_wrp{
+  /*background:lightblue;*/
+  clear: both;
+  padding: 5px;
+  border: 1px solid grey;
+}
+
+.form-wrp{
+  width: 100%;
+  margin: 10px;
+}
+
+.profile_header{
+  height: 60px;
+  width: 100%;
+  background: lightblue;
+  border-bottom: 1px solid grey;
+}
+
+.new-memory-title{
+  font-size:14px;
+  font-weight: bold;
+}
+
+.profile_menu_list > li{
+  display:inline-block;
+  margin-left: 10px;
+  /*cursor:pointer;*/
+}
+
+.profile_journies_wrp{
+  background: white;
+  margin-top:10px;
+  border: 1px solid black;
+  padding: 25px;
+
+}
+
+
+.edit_journey_icons{
+  float:right;
+  /*width:30px;*/
+  cursor:pointer;
+}

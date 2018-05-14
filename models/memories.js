@@ -1,17 +1,27 @@
 "use strict";
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const User = require('./user');
 
-var MemorySchema = new Schema({
+const MemorySchema = new Schema({
   title: String,
   description: String,
-  timeStamp:Number,
+  timeStamp: Number,
   image_url: [{
-    url:String
+    url: String
   }],
-  lat:Number,
-  lng:Number
+  lat: Number,
+  lng: Number,
+  location: String,
+  isPublic:{
+    type: Boolean,
+    default: false
+  },
+  user:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 
 });
 

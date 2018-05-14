@@ -7,28 +7,32 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+
+var journies = require('./routes/journies');
+var auth = require('./routes/auth');
 var memories = require('./routes/memories');
 
-
+var helmet = require('helmet');
 var app = express();
 
-app.get('/', (req, res)=>{
-  console.log(req)
-  res.send('work')
-})
 
-app.use(logger('dev'));
-
-// proxy to api
-
+//db setup
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/travelmate');
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  console.log('*!connected to mongoDB! savage *')
+  console.log('connected to mongoDB')
 });
+
+
+
+app.use(logger('combined'));
+
+app.use(helmet());
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -36,9 +40,11 @@ app.set('view engine', 'hbs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }))
+
+// app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -50,8 +56,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', index);
 app.use('/users', users);
-app.use('/memories', memories);
-
+app.use('/journies', journies);
+app.use('/auth', auth);
+app.use('/memories', memories)
 
 
 // catch 404 and forward to error handler

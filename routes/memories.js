@@ -1,99 +1,103 @@
 var express = require('express');
 var router = express.Router();
 var Memory = require('../models/memories');
-var ObjectId = require('mongodb').ObjectId;
-var config = require('../config.js');
-var cloudinary = require('cloudinary');
-var multer = require('multer');
-var Datauri = require('datauri');
-const path = require('path');
+var Journey = require('../models/journies');
 
+const passport = require('passport');
+const passportService = require('../services/passport');
+var requireAuth = passport.authenticate('jwt', {session:false});
 
-var memoriesCtrl = require('../controllers/memories')
-
-cloudinary.config({
-  cloud_name: config.cloud_name,
-  api_key: config.api_key,
-  api_secret: config.api_secret
-});
-
-
-router.get('/', (req, res) => {
+router.get('/', requireAuth,(req, res) => {
   console.log('get memories')
   Memory.find({}, function (err, result) {
-    // console.log(result)
     if(err) return next(err);
     res.json(result)
   });
 });
 
 
-var uploadService = multer({
-  storage: multer.memoryStorage(),
-  // file size limitation in bytes
-  // limits: { fileSize: 52428800 },
+router.get('/:id', requireAuth, (req, res) => {
+  // console.log('get mem',req.body)
+  Memory.findById(req.params.id, (err, memory) => {
+    if (err) {
+      res.send(err);
+    }
+    // console.log(memory)
+    res.json(memory)
+  })
+
+})
+
+router.post('/update/:id', requireAuth, function(req, res){
+  console.log('$&*@($&£$*@£$&@£(@$*  memory post timeSTAMP ', req.body.timeStamp)
+  var title = req.body.title;
+  var description = req.body.description;
+  var lat = req.body.lat;
+  var lng = req.body.lng;
+  var location = req.body.location;
+  var timeStamp = req.body.timeStamp;
+
+  Memory.update(
+    { "_id" : req.params.id },
+    { "$set": {
+      title: title,
+      description: description,
+      location:location,
+      lat:lat,
+      lng:lng,
+      timeStamp:timeStamp
+    }},
+
+    function (err, memory) {
+      if (err){
+        console.log("there is an error: " + err)
+      } else {
+        res.status(200).json({
+          message: 'Success',
+          obj: memory
+        });
+      }
+    }
+  )
 });
 
 
-router.post('/new', uploadService.array('theseNamesMustMatch', 10), (req, res) => {
-
-    const memories = [].concat(req.files)
-    const posted_URLS = []
-
-    var mems = memories.map((memory)=>{
-      return new Promise(function(resolve, reject) {
-
-        var dUri = new Datauri();
-        dUri.format(path.extname(memory.originalname).toString(),memory.buffer);
-        return cloudinary.uploader.upload(dUri.content, function (resp) {
-          console.log(resp.url)
-          posted_URLS.push({url:resp.url})
-          resolve();
-        })
-
-      })
-    })
-
-    Promise.all(mems)
-      .then(function() {
-        console.log('all dropped)', posted_URLS);
-        console.log("@£$@£$@£$ SAVING",posted_URLS);
-
-        var _memory = new Memory({
-          title: req.headers.title,
-          image_url: posted_URLS,
-          timeStamp:new Date().getTime(),
-          description: req.headers.description,
-          lat:req.headers.lat,
-          lng:req.headers.lng
-        })
-
-       console.log('memeour',_memory.image_url)
-
-        _memory.save(function (err, result ) {
-          if(err){
-            console.log(err)
-            res.send(err)
-          }
-            console.log('MEMORY SAVEd, result =>', result)
-            res.json(result)
-        })
-      })
-      .catch(console.error);
+router.delete('/:journeyId/:memId',  (req,res)=>{
+  console.log(req.params.journeyId)
+  console.log(req.params.memId)
 
 
-      // let filePath = memories[i]
+  //finds relevant journey and deletes memory reference
+  Journey.update(
+    { "_id" : req.params.journeyId },
+    { "$pull": { memories: req.params.memId  } },
+    function (err, doc) {
+      if (err){
+        console.log("there is an error: " + err)
+      } else {
+        res.status(200).json({
+          message: 'Success',
+          obj: doc
+        });
+      }
+    }
+  )
 
+  Memory.findByIdAndRemove(id, function(err, memory) {
+    if (err)
+      throw err;
 
-    //
+    if (!memory) {
+      return res.status(404).json({
+        message: 'Could not delete memory'
+      });
+    }
 
-    //   //do something with the finalized list of albums here
-    // })
+    res.json({
+      result: 'Memory was deleted'
+    });
 
-    // }
-
-
-
+  });
 
 })
 

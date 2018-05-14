@@ -1,0 +1,139 @@
+.journey_title_wrp{
+  /*border-top: 6px solid white;*/
+  border-bottom: 2px solid black;
+  /*height:100px;*/
+  background: white;
+  clear:both;
+  border-radius: 3px;
+}
+
+.journey_title{
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  padding:15px;
+  clear:both;
+}
+
+.journey_title_main{
+  font-weight: bold;
+}
+
+.timeline_container{
+  width: 85%;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+.timeline-background{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index: -5;
+  background: lightpink;
+  /*height:1200px;*/
+  width:100%;
+}
+
+.memory:nth-child(odd) {
+    color: #02203E;
+    background: white;
+    float: left;
+    box-shadow: 1px 1px 1px lightgrey;
+    border: 1px solid lightgrey;
+
+}
+
+.memory:nth-child(even) {
+    background: white;
+    color:#02203E;
+    box-shadow: 1px 1px 1px lightgrey;
+    float: right;
+    border: 1px solid lightgrey;
+}
+
+.memory {
+    margin-top: 50px;
+    /* border: red 1px solid; */
+    width: 88%;
+    min-height: 300px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.memories_wrp{
+  z-index: 5;
+}
+
+.clearFix{
+  display: block;
+  clear:both;
+}
+.memory_title_wrp{
+  margin-top:-47px;
+  /*clear:both;*/
+}
+
+.memory_title{
+  padding-bottom: 10px;
+  min-height: 25px;
+  width:100%;
+  color:grey;
+  font-size: 13px
+  /*margin:5px;*/
+}
+
+.memory_location_wrp{
+  min-height:19px;
+}
+
+.memory_location{
+
+}
+
+.memory_date{
+  width: 100%;
+  margin: 0 auto;
+  color:grey;
+  font-size:10px;
+}
+
+.memory_date_wrp{
+
+}
+
+.memory:nth-child(even) > .memory_date_wrp > .memory_date,
+.memory:nth-child(even) > .memory_location_wrp{
+  text-align: left;
+  margin-left: -13.5%;
+}
+
+.memory:nth-child(odd) > .memory_date_wrp > .memory_date,
+.memory:nth-child(odd) > .memory_location_wrp{
+  text-align: right;
+  margin-right: -13.5%;
+}
+
+.gallery_and_text_wrap{
+  clear:both;
+}
+
+.timeline_text{
+  width: 39%;
+  height: 350px;
+  text-align: justify;
+  float: right;
+  padding: 10px;
+  overflow: auto;
+}
+
+.timeline_gallery{
+  width: 60%;
+  height: 350px;
+  float: left;
+  padding: 10px;
+  background:white;
+  overflow: auto;
+  border-radius: 8px;
+  box-shadow: 2px 2px 2px lightgrey;
+  border: 1px solid black;
+}

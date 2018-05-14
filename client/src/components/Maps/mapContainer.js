@@ -1,24 +1,79 @@
 import React, { Component } from 'react';
-// import Uploadmyfile from './imageUpload';
-
+import superagent from 'superagent';
+import axios from 'axios';
 import Initialmap from './map';
+import { withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 
+/*global google*/ //needed to let google work?
 
 class Mapcontainer extends Component {
+
   constructor(props){
-    super();
-    console.log('Mapcontainer', props)
+    super(props);
+    // console.log('Mapcontainer', props)
     this.state = {
+      journey:null,
       memories: null,
-      openInfo:false
+      openInfo:false,
+      tempMemories:[],
+      bounds:null
+    }
+      this.fetchMemories = this.fetchMemories.bind(this)
+      this.setBounds = this.setBounds.bind(this)
+      this.handleMarkerClick = this.handleMarkerClick.bind(this);
+      this.handleMarkerClose = this.handleMarkerClose.bind(this);
+  }
+
+  //retrieve the memories from db referenced in the journey
+  fetchMemories(){
+
+    if(this.props.journey){
+      // console.log('fetch memory', this.props.journey)
+      // console.log('propss fetch memories', this.state.journey)
+      const promiseList = this.props.journey.memories.map( mem => {
+        return superagent
+        .get(`/memories/${mem}`)
+        .set('authorization', localStorage.getItem('token'))
+        .then( res => res.body );
+      });
+
+      Promise.all( promiseList )
+      .then( results => {
+        this.setState({
+          memories: results
+        }, () => { this.setBounds() } ); //call set bounds after setState to force update
+      })
+      .catch( err => {
+        console.log(err)
+      });
+
     }
   }
 
-  handleMarkerClick = this.handleMarkerClick.bind(this);
-  handleMarkerClose = this.handleMarkerClose.bind(this);
+  setBounds(){
+    // console.log('set bounds called', this.state.memories)
+    var latlng = []
+
+    if(this.state.memories){
+
+      this.state.memories.map((mem)=>{
+        latlng.push(new google.maps.LatLng(mem.lat, mem.lng))
+      })
+
+      var bounds = new google.maps.LatLngBounds();
+      for (var i = 0; i < latlng.length; i++) {
+        bounds.extend(latlng[i]);
+      }
+
+      this.setState({
+        bounds:bounds
+      })
+    }
+  }
+
 
   handleMarkerClick(target) {
-    console.log('marker click')
+    // console.log('marker click')
 
     let tempArray = []
     this.state.memories.map(mem => {
@@ -29,7 +84,6 @@ class Mapcontainer extends Component {
         mem = Object.assign(mem, {showInfo: false})
         tempArray.push(mem)
       }
-
     })
     this.setState({
       memories:tempArray
@@ -37,14 +91,7 @@ class Mapcontainer extends Component {
 
    }
 
-  componentWillReceiveProps(nextProps){
-    this.setState({
-      images:nextProps.data
-    })
-  }
-
   handleMarkerClose(target) {
-    console.log('handlemarker close')
       let tempArray = []
       this.state.memories.map(mem => {
       if (mem === target) {
@@ -53,41 +100,44 @@ class Mapcontainer extends Component {
       } else {
         tempArray.push(mem)
       }
-
     })
     this.setState({
       memories:tempArray
     })
   }
 
-  componentWillReceiveProps(nextProps){
-    console.log(nextProps)
-    let tempImages = []
-    nextProps.memories.map((mem)=>{
-      tempImages.push(mem)
-    })
-    this.setState({
-      memories:tempImages
-    })
+  componentDidMount(){
+    // console.log('componentDidMount STATE', this.state)
+    // console.log('componentDidMount PROPS', this.props)
+    this.fetchMemories()
+    // this.setBounds()
   }
 
-  showState(){
-    console.log('mem ctr',this.state)
+  componentWillReceiveProps(nextProps){
+    // console.log('cwrp',nextProps)
+
+    this.setState({
+      journey:nextProps.journey
+    }, () => { this.fetchMemories() })
   }
 
   render(){
     return (
-      <div style={{height:'100%'}}>
-        <button onClick={this.showState.bind(this)}>show state(mapCTR)</button>
-        <Initialmap
-          markers={this.state.memories}
-          isMarkerShown={true}
-          loadingElement={<div style={{ height: `100%` }} />}
-          containerElement={<div style={{ height: `80vh` }} />}
-          mapElement={<div style={{ height: `100%` }} />}
-          onMarkerClick={this.handleMarkerClick}
-          onMarkerClose={this.handleMarkerClose}
-        />
+      <div>
+        {this.props.journey && <div style={{fontWeight: 'bold',float:'right', fontSize:'13px'}}>{this.props.journey.title}</div> }
+
+        <div style={{height:'100%', clear:'both'}}>
+          <Initialmap
+            bounds={this.state.bounds}
+            markers={this.state.memories}
+            isMarkerShown={true}
+            loadingElement={<div style={{ height: `100%` }} />}
+            containerElement={<div style={{ height: `80vh` }} />}
+            mapElement={<div style={{ height: `100%` }} />}
+            onMarkerClick={this.handleMarkerClick}
+            onMarkerClose={this.handleMarkerClose}
+          />
+        </div>
       </div>
     );
   }

@@ -8,6 +8,12 @@
     },
     "/memories": {
       "target": "http://localhost:3001"
+    },
+    "/journies": {
+      "target": "http://localhost:3001"
+    },
+    "/auth": {
+      "target": "http://localhost:3001"
     }
   },
   "dependencies": {
@@ -15,15 +21,29 @@
     "cloudinary-react": "^1.0.4",
     "form-data": "^2.3.1",
     "google-maps-react": "^1.1.0",
+    "history": "^4.7.2",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
+    "moment": "^2.19.1",
     "react": "^16.0.0",
+    "react-bootstrap": "^0.31.5",
+    "react-datepicker": "^0.61.0",
     "react-dom": "^16.0.0",
     "react-dropzone": "^4.2.0",
     "react-geosuggest": "^2.5.0",
     "react-google-autocomplete": "^1.0.15",
     "react-google-maps": "^9.0.1",
+    "react-modal": "^3.1.6",
+    "react-redux": "^5.0.6",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.14",
+    "react-slick": "^0.15.4",
+    "redux": "^3.7.2",
+    "redux-form": "^7.1.2",
+    "redux-promise": "^0.5.3",
+    "redux-thunk": "^2.2.0",
+    "slick-carousel": "^1.8.1",
     "superagent": "^3.6.3"
   },
   "scripts": {

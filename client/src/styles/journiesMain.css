@@ -1,0 +1,4 @@
+.journies_boxes:hover{
+  box-shadow: 1px 1px 1px lightgrey;
+  border: 1px solid blue;
+}

@@ -1,0 +1,22 @@
+.slick-slide
+{
+  background:black;
+  /*width:100%;*/
+
+}
+
+/*this is an important bug fix for the slick slider feature*/
+.slick-list{
+  height:auto !important;
+  text-align: center;
+}
+
+ .slick-track div{
+    /*width: 100% */
+    text-align: center!important;
+}
+
+/*.slick-no-slide .slick-slide {
+    float: none;
+    display: inline-block;
+}*/

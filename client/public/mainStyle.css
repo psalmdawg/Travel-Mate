@@ -1,12 +1,20 @@
 
+body{
+  font: 1em Calibri, Optima, Arial, sans-serif;
+}
+
+.crsr-pntr{
+  cursor:poiner;
+}
+
 .geosuggest__suggests--hidden {
   max-height: 0;
   overflow: hidden;
   border-width: 0;
   display:none;
 }
-.geosuggest__suggests{
 
+.geosuggest__suggests{
   cursor:pointer;
   position:absolute;
   max-height: 25em;
@@ -34,10 +42,10 @@
   background: #267dc0;
   color: #fff;
 }
-.info_img{
+/*.info_img{
   transition: all .2s ease-in-out;
 }
 .info_img:hover{
   transform: scale(1.1);
   border:1px solid white;
-}
+}*/
